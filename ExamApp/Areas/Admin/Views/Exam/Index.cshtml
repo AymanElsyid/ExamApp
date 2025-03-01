@@ -1,0 +1,52 @@
+﻿@model List<TbExam>;
+<div class="col-lg-6 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Basic Table</h4>
+            <p class="card-description">
+                Exam List
+            </p>
+
+            <a class="btn btn-outline-success" href="/Admin/Exam/Add"> New Exam</a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Exam Title</th>
+                        <th>Created</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr style="text-align:center;">
+                            <td colspan="3" class="text-info"> No Data Found</td>
+                        </tr>
+                    }
+                    else
+                    {
+
+                        foreach (var exam in Model)
+                        {
+                            <tr>
+                                <td>@exam?.Title</td>
+                                <td>@exam?.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                <td><label class='@(exam?.CurrentState == 1 ? "badge badge-success" : "badge badge-danger")'>@(exam?.CurrentState == 1 ? "Completed" : "Pending")</label></td>
+                                <td>
+                                    <button class="btn btn-outline-primary" href="/Admin/Exam/Edit?Id=@exam?.Id"> Edit</button>
+                                    <button class='@(exam?.CurrentState == 1 ? "btn btn-outline-danger" : "btn btn-success")' onclick='@(exam?.CurrentState == 1 ?"Delete":"Active")("@exam?.Id")'>@(exam?.CurrentState == 1 ? "Delete" : "Active")</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="~/js/ExamList.js"></script>
+}
