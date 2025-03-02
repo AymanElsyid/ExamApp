@@ -1,4 +1,63 @@
-﻿@model List<TbExam>;
+﻿@model List<ExamIndexViewModel>;
+
+@{
+    ViewData["Title"] = "Exam List";
+}
+<h1>@ViewData["Title"]</h1>
 
 
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Exam Title</th>
+            <th>Question Count</th>
+            <th>Exam Score</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var exam in Model)
+        {
+            <tr>
+                <td>@exam.ExamTitle</td>
+                <td>@exam.Questions.Count</td>
+                <td>@(exam.ExamResults.Count == 0 ? "Not Start Yet" : exam.ExamResults.FirstOrDefault().Score+"%")</td>
+                <td>
+                    @{
+                        if (exam.ExamResults.Count == 0)
+                        {
+                            <button class="btn btn-primary" onclick="StartExam('@exam.ExamId')">Start Now</button>
+                        }
+                        else
+                        {
+                            if (exam.Questions.Count > 60)
+                            {
+                                <button class="btn btn-success" onclick="Review('@exam.ExamId')">Review Question</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger" onclick="Review('@exam.ExamId')">Review Question</button>
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
+@section scripts {
+
+    <script>
+        function StartExam(examId)
+        {
+            window.location.href = "/Exam/Start?Id="+examId;
+        }
+
+        function Review(examId)
+        {
+            window.location.href = "/Exam/Review?Id="+examId;
+        }
+
+    </script>
+}

@@ -31,6 +31,7 @@ namespace Domain
         public virtual DbSet<TbExamResult> ExamResults { get; set; }
         public virtual DbSet<TbQuestion> Questions { get; set; }
         public virtual DbSet<TbAnswer> Answers { get; set; }
+        public virtual DbSet<TbUserAnswer> UserAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

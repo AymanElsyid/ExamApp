@@ -17,13 +17,15 @@ namespace Bl.Model
 
     public class QuestionViewModel
     {
+        public Guid Id { get; set; }
         public string QuestionTitle { get; set; }
         public List<AnswerViewModel> Answers { get; set; }
     }
 
     public class AnswerViewModel
     {
+        public Guid Id { get; set; }
         public string AnswerTitle { get; set; }
-        public bool IsCorrect { get; set; }  // This replaces 'Chosse'
+        public bool IsCorrect { get; set; }  
     }
 }

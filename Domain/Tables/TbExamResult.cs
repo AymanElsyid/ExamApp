@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,6 +11,10 @@ namespace Domain.Tables
 {
     public class TbExamResult : BaseTable
     {
+        public TbExamResult()
+        {
+            UserAnswers = new HashSet<TbUserAnswer>();
+        }
 
         [ForeignKey("User")]
         public string UserId { get; set; } 
@@ -23,5 +28,6 @@ namespace Domain.Tables
 
         public ApplicationUser User { get; set; }
         public TbExam Exam { get; set; }
+        public virtual ICollection<TbUserAnswer> UserAnswers { get; set; }
     }
 }

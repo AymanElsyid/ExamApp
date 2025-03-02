@@ -12,10 +12,10 @@ namespace Bl.Infrastructure
 {
     public class ClsTable<T> : ITable<T> where T : BaseTable
     {
-        ExamAppDbContext Db = new ExamAppDbContext();
-        public ClsTable()
+        private readonly ExamAppDbContext Db;
+        public ClsTable(ExamAppDbContext _Db)
         {
-            
+            Db = _Db;
         }
         public bool Add(T Obj)
         {

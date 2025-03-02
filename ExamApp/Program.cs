@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Bl.services;
 using Domain;
 using Domain.Tables;
-using Bl.services;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Bl.Infrastructure;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ExamApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +13,7 @@ builder.Services.AddDbContext<ExamAppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IClsUser, ClsUser>();
 builder.Services.AddScoped<IClsExam, ClsExam>();
+builder.Services.AddScoped<IClsExamSubmit, ClsExamSubmit>();
 
 
 
@@ -50,7 +49,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await SeedData(userManager, roleManager);
+    await SeedData.SeedBasicData(userManager, roleManager);
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -73,44 +72,3 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
-async Task SeedData(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
-{
-    // Create roles if they do not exist
-    if (!await roleManager.RoleExistsAsync("User"))
-        await roleManager.CreateAsync(new IdentityRole("User"));
-
-    if (!await roleManager.RoleExistsAsync("Admin"))
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-    // Check if any users exist in the database
-    if (!userManager.Users.Any())
-    {
-        // Create User with Role "User"
-        var user = new ApplicationUser
-        {
-            UserName = "user@Gmail.com",
-            Email = "user@Gmail.com",
-            EmailConfirmed = true
-        };
-
-        var userResult = await userManager.CreateAsync(user, "User@123");
-        if (userResult.Succeeded)
-        {
-            await userManager.AddToRoleAsync(user, "User");
-        }
-
-        // Create Admin with Role "Admin"
-        var admin = new ApplicationUser
-        {
-            UserName = "admin@Gmail.com",
-            Email = "admin@Gmail.com",
-            EmailConfirmed = true
-        };
-
-        var adminResult = await userManager.CreateAsync(admin, "Admin@123");
-        if (adminResult.Succeeded)
-        {
-            await userManager.AddToRoleAsync(admin, "Admin");
-        }
-    }
-}

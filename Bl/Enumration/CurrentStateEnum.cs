@@ -11,4 +11,10 @@ namespace Bl.Enumration
         Deleted,
         Active
     }
+    
+    public enum AswerStateEnum
+    {
+        Wrong,
+        Right
+    }
 }

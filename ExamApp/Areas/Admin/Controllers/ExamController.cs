@@ -6,6 +6,7 @@ using Domain.Tables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ExamApp.Areas.Admin.Controllers
 {
@@ -45,31 +46,14 @@ namespace ExamApp.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExam(Guid Id)
         {
-            var exam = await clsExam.GetExamWithDetailsAsync(Id);
+            var exam =await  clsExam.GetExamWithDetailsAsync(Id);
             if (exam == null)
             {
                 return NotFound(new { message = "Exam not found." });
             }
 
-            var result = new
-            {
-                ExamID = exam.Id,
-                ExamTitle = exam.Title,
-                ShowInHomePage = Convert.ToBoolean(exam.CurrentState),
-                Questions = exam.Questions.Select(q => new
-                {
-                    QuestionID = q.Id,
-                    QuestionTitle = q.Title,
-                    Answers = q.Answers.Select(a => new
-                    {
-                        AnswerID = a.Id,
-                        AnswerTitle = a.Title,
-                        IsCorrect = a.IsCorrect
-                    }).ToList()
-                }).ToList()
-            };
 
-            return Ok(result);
+            return Ok(exam);
         }
 
 
