@@ -34,7 +34,7 @@
                                 <td>@exam?.CreatedDate.ToString("dd/MM/yyyy")</td>
                                 <td><label class='@(exam?.CurrentState == 1 ? "badge badge-success" : "badge badge-danger")'>@(exam?.CurrentState == 1 ? "Completed" : "Pending")</label></td>
                                 <td>
-                                    <button class="btn btn-outline-primary" href="/Admin/Exam/Edit?Id=@exam?.Id"> Edit</button>
+                                    <a class="btn btn-outline-primary" href="/Admin/Exam/Add?ExamID=@exam?.Id"> Edit</a>
                                     <button class='@(exam?.CurrentState == 1 ? "btn btn-outline-danger" : "btn btn-success")' onclick='@(exam?.CurrentState == 1 ?"Delete":"Active")("@exam?.Id")'>@(exam?.CurrentState == 1 ? "Delete" : "Active")</button>
                                 </td>
                             </tr>

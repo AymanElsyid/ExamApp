@@ -21,7 +21,7 @@ namespace Bl.Infrastructure
         {
             try
             {
-                Obj.Id = new Guid();
+                Obj.Id = Guid.NewGuid();
                 Db.Set<T>().Add(Obj);
                 Db.SaveChanges();
                 return true;

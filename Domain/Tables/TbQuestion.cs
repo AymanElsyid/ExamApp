@@ -12,7 +12,7 @@ namespace Domain.Tables
     {
         public TbQuestion()
         {
-            
+            Answers = new HashSet<TbAnswer>();
         }
 
         public string Title { get; set; }

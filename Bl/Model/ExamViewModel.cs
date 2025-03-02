@@ -9,6 +9,7 @@ namespace Bl.Model
 {
     public class ExamViewModel
     {
+        public Guid Id { get; set; }
         public string ExamTitle { get; set; }
         public bool ShowInHomePage { get; set; }
         public List<QuestionViewModel> Questions { get; set; }

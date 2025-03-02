@@ -9,28 +9,28 @@ using System.Threading.Tasks;
 
 namespace Bl.services
 {
-    interface IClsUser
+    public interface IClsUser
     {
         ApplicationUser GetData(string UserName);
         string GetUserId(string UserName);
         ApplicationUser GetUserById(string Id);
 
     }
-    public class ClasUser : IClsUser
+    public class ClsUser : IClsUser
     {
         private readonly  UserManager<ApplicationUser> userManager;
         private readonly  ExamAppDbContext db;
-        public ClasUser(UserManager<ApplicationUser> _userManager, ExamAppDbContext _db)
+        public ClsUser(UserManager<ApplicationUser> _userManager, ExamAppDbContext _db)
         {
-            _db = db;
-            _userManager = userManager;
+            db= _db;
+            userManager = _userManager;
         }
         public ApplicationUser GetData(string UserName)
         {
             try
             {
                 var User = db.users.FirstOrDefault(x=>x.UserName==UserName);
-                return User;
+                return User ==null?new ApplicationUser():User;
             }
             catch
             {
@@ -55,7 +55,7 @@ namespace Bl.services
             try
             {
                 var User = db.users.FirstOrDefault(x => x.UserName == UserName);
-                return User.Id?? string.Empty;
+                return User == null ? string.Empty:User.Id;
             }
             catch
             {

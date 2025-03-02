@@ -1,77 +1,116 @@
 ﻿using Bl.Enumration;
 using Bl.Infrastructure;
 using Bl.Model;
+using Bl.services;
 using Domain.Tables;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ExamController : Controller
     {
-        ClsTable<TbExam> clsExam = new ClsTable<TbExam>();
-        public ExamController()
+        private readonly IClsExam clsExam;
+        public ExamController(IClsExam _clsExam)
         {
-            
+            clsExam = _clsExam;
         }
         public IActionResult Index()
         {
             var Exams = clsExam.GetAll();
             return View(Exams);
         }
-        
+
         public IActionResult Add()
         {
-            return View(new TbExam());
+            return View();
         }
         [HttpPost]
         public bool Delete(Guid Id)
         {
-            var Result= clsExam.Delete(Id);
+            var Result = clsExam.Delete(Id);
             return Result;
         }
-        
+
         [HttpPost]
         public bool Active(Guid Id)
         {
-            var Result= clsExam.Active(Id);
+            var Result = clsExam.Active(Id);
             return Result;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetExam(Guid Id)
+        {
+            var exam = await clsExam.GetExamWithDetailsAsync(Id);
+            if (exam == null)
+            {
+                return NotFound(new { message = "Exam not found." });
+            }
+
+            var result = new
+            {
+                ExamID = exam.Id,
+                ExamTitle = exam.Title,
+                ShowInHomePage = Convert.ToBoolean(exam.CurrentState),
+                Questions = exam.Questions.Select(q => new
+                {
+                    QuestionID = q.Id,
+                    QuestionTitle = q.Title,
+                    Answers = q.Answers.Select(a => new
+                    {
+                        AnswerID = a.Id,
+                        AnswerTitle = a.Title,
+                        IsCorrect = a.IsCorrect
+                    }).ToList()
+                }).ToList()
+            };
+
+            return Ok(result);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateExam([FromBody] ExamViewModel model)
+        public async Task<IActionResult> CreateExamAsync([FromBody] ExamViewModel model)
         {
             if (model == null || string.IsNullOrWhiteSpace(model.ExamTitle) || model.Questions == null || model.Questions.Count == 0)
             {
                 return BadRequest("Invalid data.");
             }
 
-            var exam = new TbExam
+            try
             {
-                Id = Guid.NewGuid(),
-                Title = model.ExamTitle,
-                CurrentState= model.ShowInHomePage?(int)CurrentStateEnum.Active: (int)CurrentStateEnum.Deleted,
-                Questions = model.Questions.Select(q => new TbQuestion
-                {
-                    
-                    Title = q.QuestionTitle,
-                    Answers = q.Answers.Select(a => new TbAnswer
-                    {
-                        Id = Guid.NewGuid(),
-                        Title = a.AnswerTitle,
-                        IsCorrect= a.IsCorrect
-                    }).ToList()
-                }).ToList()
-            };
 
-            var Rersult =  clsExam.Add(exam);
-                if(Rersult)
-            return Ok(new { message = "Exam created successfully" });
-                else
-                return BadRequest(new { message = "Exam created successfully" });
+                await clsExam.CreateExamAsync(model);
 
+                return Ok(new { message = "Exam created successfully" });
+            }
+            catch
+            {
+                return BadRequest(new { message = "Exam created unsuccessfully" });
+            }
+
+            
+
+        }
+        [HttpPut]
+        public async Task<IActionResult> EditExam([FromBody] EditExamViewModel model)
+        {
+
+            try
+            {
+
+                await clsExam.UpdateExamAsync(model);
+
+                return Ok(new { message = "Exam updated successfully!" });
+            }
+            catch
+            {
+                return BadRequest(new { message = "Exam updated unsuccessfully" });
+            }
         }
     }
 }
